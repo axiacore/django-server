@@ -84,3 +84,10 @@ echo "local $PROJECTNAME $PROJECTNAME md5" >> /etc/postgresql/$PGVERSION/main/pg
 sed -i "s/#password_encryption = on/password_encryption = on/g" /etc/postgresql/$PGVERSION/main/postgresql.conf
 /etc/init.d/postgresql restart
 
+# Salt configuration
+# This is an autonomous minion
+sed -i "s/#file_client: remote/file_client: local/g"
+mkdir /srv/salt
+cd /tmp
+git clone git@github.com:AxiaCore/django-server.git
+cp django-server/salt/* /srv/salt
