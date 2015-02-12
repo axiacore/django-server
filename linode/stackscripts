@@ -19,6 +19,15 @@
 #
 #<UDF name="pgversion" label="Version of postgresql ie 9.4">
 # PGVERSION=
+#
+#<UDF name="has_celery" label="true if uses celery, otherwise disabled">
+# USESCELERY=
+#
+#<UDF name="has_ssl" label="true if will be using ssl">
+# USESSSL=
+#
+#<UDF name="has_notifications" label="true if has real time notifications">
+# USESNOTIFICATIONS=
 
 # This sets the variable $IPADDR to the IP address the new Linode receives.
 IPADDR=$(/sbin/ifconfig eth0 | awk '/inet / { print $2 }' | sed 's/addr://')
@@ -33,7 +42,7 @@ hostname -F /etc/hostname
 echo $IPADDR $FQDN $HOSTNAME >> /etc/hosts
 
 # Prepared external sources
-apt-get install -y python-software-properties software-properties-common
+apt-get install -y python-software-properties software-properties-common unattended-upgrades
 add-apt-repository -y ppa:chris-lea/node.js
 add-apt-repository -y ppa:chris-lea/nginx-devel
 add-apt-repository -y ppa:chris-lea/redis-server
@@ -91,3 +100,20 @@ mkdir /srv/salt
 cd /tmp
 git clone git@github.com:AxiaCore/django-server.git
 cp django-server/salt/* /srv/salt
+
+# Pillar configuration
+cat > /srv/pillar/common_pillar.sls << EOF
+project_name: $PROJECTNAME
+uses_celery: $USESCELERY
+uses_ssl: $USESSSL
+fqdn: $FQDN
+public_ip: $IPADDR
+hostname: $HOSTNAME
+uses_notifications: $USESNOTIFICATIONS
+EOF
+
+cat > /srv/pillar/top.sls << EOF
+base:
+  '*':
+     - common_pillar
+EOF
