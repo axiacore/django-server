@@ -107,11 +107,12 @@ sed -i "s/#password_encryption = on/password_encryption = on/g" /etc/postgresql/
 
 # Salt configuration
 # This is an autonomous minion
-sed -i "s/#file_client: remote/file_client: local/g"
+sed -i "s/#file_client: remote/file_client: local/g" /etc/salt/minion
 mkdir -p /srv/salt
 cd /tmp
 git clone https://github.com/AxiaCore/django-server.git
 cp django-server/salt/* /srv/salt
+chmod o+x /srv/salt/django-project/*.sh
 mkdir -p /srv/pillar
 
 
