@@ -37,6 +37,9 @@
 #
 #<UDF name="bitbucket_pass" label="BitBucket password">
 # REPOPASS=
+#
+#<UDF name="repository_slug" label="Slug of the repository">
+# REPOSLUG=
 
 # This sets the variable $IPADDR to the IP address the new Linode receives.
 IPADDR=$(/sbin/ifconfig eth0 | awk '/inet / { print $2 }' | sed 's/addr://')
@@ -105,11 +108,12 @@ sed -i "s/#password_encryption = on/password_encryption = on/g" /etc/postgresql/
 # Salt configuration
 # This is an autonomous minion
 sed -i "s/#file_client: remote/file_client: local/g"
-mkdir /srv/salt
+mkdir -p /srv/salt
 cd /tmp
 git clone https://github.com/AxiaCore/django-server.git
 cp django-server/salt/* /srv/salt
-mkdir /srv/pillar
+mkdir -p /srv/pillar
+
 
 # Pillar configuration
 cat > /srv/pillar/data.sls << EOF
@@ -121,6 +125,7 @@ public_ip: $IPADDR
 hostname: $HOSTNAME
 uses_notifications: $USESNOTIFICATIONS
 project_repo: $PROJECTREPO
+repo_slug: $REPOSLUG
 EOF
 
 cat > /srv/pillar/top.sls << EOF
