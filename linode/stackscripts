@@ -32,9 +32,6 @@
 #<UDF name="has_notifications" label="true if has real time notifications">
 # USESNOTIFICATIONS=
 #
-#<UDF name="project_repository" label="The one in bitbucket">
-# PROJECTREPO=
-#
 #<UDF name="bitbucket_user" label="BitBucket user">
 # REPOUSER=
 #
@@ -128,7 +125,6 @@ fqdn: $FQDN
 public_ip: $IPADDR
 hostname: $HOSTNAME
 uses_notifications: $USESNOTIFICATIONS
-project_repo: $PROJECTREPO
 repo_slug: $REPOSLUG
 db_password: $DBPASS
 EOF

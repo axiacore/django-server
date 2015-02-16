@@ -15,7 +15,7 @@ fetch-repo:
            - REPOSLUG: {{ pillar['repo_slug'] }}
 
     git.latest:
-        - name: {{ pillar['project_repo'] }}
+        - name: git@bitbucket.org:axiacore/{{ pillar['repo_slug'] }}.git
         - target: /opt/deploy/{{ pillar['project_name'] }}_app/{{ pillar ['project_name'] }}
         - rev: master
         - identity: /opt/deploy/.ssh/id_rsa
