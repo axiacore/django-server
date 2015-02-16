@@ -89,7 +89,9 @@ useradd -d /opt/deploy -G www-data deploy
 echo "$DEPLOYPASS\n$DEPLOYPASS" | passwd deploy
 mkdir -p /opt/deploy/.ssh/
 wget $KEYFILE -O /opt/deploy/.ssh/authorized_keys
+chown -R deploy:www-data "/opt/deploy/.ssh"
 mkdir -p "/opt/deploy/"$PROJECTNAME"_app"
+chown -R deploy:www-data "/opt/deploy/"$PROJECTNAME"_app"
 
 # salt basic installation
 apt-get install -y salt-master salt-minion salt-syndic salt-cloud salt-ssh salt-api
@@ -111,7 +113,7 @@ sed -i "s/#file_client: remote/file_client: local/g" /etc/salt/minion
 mkdir -p /srv/salt
 cd /tmp
 git clone https://github.com/AxiaCore/django-server.git
-cp django-server/salt/* /srv/salt
+cp -rf django-server/salt/* /srv/salt
 chmod o+x /srv/salt/django-project/*.sh
 mkdir -p /srv/pillar
 
