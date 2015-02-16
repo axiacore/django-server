@@ -27,3 +27,12 @@ pip-install:
         - cwd: /opt/deploy/{{ pillar['project_name'] }}_app/
         - env:
            - PROJECTNAME: {{ pillar['project_name'] }}
+
+
+/opt/deploy/{{ pillar['project_name'] }}_app/{{ pillar ['project_name'] }}/app/local_settings.py:
+    file.managed:
+        - source: salt://django-project/local_settings.py
+        - user: deploy
+        - mode: 640
+        - group: www-data
+        - template: jinja

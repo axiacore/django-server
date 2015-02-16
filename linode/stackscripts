@@ -17,6 +17,9 @@
 #<UDF name="projectname" label="this will be the username for the db and the dir name">
 # PROJECTNAME=
 #
+#<UDF name="dbpass" label="this will be the password for the database">
+# DBPASS=
+#
 #<UDF name="pgversion" label="Version of postgresql ie 9.4">
 # PGVERSION=
 #
@@ -97,7 +100,7 @@ apt-get autoremove
 
 # database related stuff
 # database user creation
-su postgres -c "psql -c \"CREATE user $PROJECTNAME password '"'"'$PROJECTNAME'"'"' ;\""
+su postgres -c "psql -c \"CREATE user $PROJECTNAME password '"'"'$DBPASS'"'"' ;\""
 # database creation
 su postgres -c "createdb -O $PROJECTNAME $PROJECTNAME"
 echo "local $PROJECTNAME $PROJECTNAME md5" >> /etc/postgresql/$PGVERSION/main/pg_hba.conf
@@ -127,6 +130,7 @@ hostname: $HOSTNAME
 uses_notifications: $USESNOTIFICATIONS
 project_repo: $PROJECTREPO
 repo_slug: $REPOSLUG
+db_password: $DBPASS
 EOF
 
 cat > /srv/pillar/top.sls << EOF
