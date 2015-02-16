@@ -18,6 +18,7 @@ fetch-repo:
         - name: git@bitbucket.org:axiacore/{{ pillar['repo_slug'] }}.git
         - target: /opt/deploy/{{ pillar['project_name'] }}_app/{{ pillar ['project_name'] }}
         - rev: master
+        - user: deploy
         - identity: /opt/deploy/.ssh/id_rsa
 
 pip-install:
