@@ -12,4 +12,5 @@ curl -v --request POST --user $USERNAME:$PASSWORD \
   --header "Accept: application/json" \
   -d "{\"key\": \"$PUB_KEY\"}" 2>/dev/null
 
-mkdir /opt/deploy/{{ pillar['project_name'] }}_app/ws
+DIRNAME="/opt/deploy/"$PROJECTNAME"_app/ws"
+mkdir DIRNAME
