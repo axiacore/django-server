@@ -22,6 +22,6 @@ websockets:
     - template: jinja
 {% if pillar['uses_notifications'] == True %}
     - name: /opt/deploy/{{ pillar['project_name'] }}_app/uwsgi_websocket.ini
-{% endif %}
+{% else %}
     - name: /tmp/uwsgi_websocket.xxx
 {% endif %}
