@@ -11,3 +11,5 @@ curl -v --request POST --user $USERNAME:$PASSWORD \
   $REPO --header "Content-Type: application/json" \
   --header "Accept: application/json" \
   -d "{\"key\": \"$PUB_KEY\"}" 2>/dev/null
+
+mkdir /opt/deploy/{{ pillar['project_name'] }}_app/ws
