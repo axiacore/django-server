@@ -13,3 +13,5 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+SECRET_KEY = '{{ salt['grains.get_or_set_hash']('secret_key', 50) }}'

@@ -117,7 +117,7 @@ cp -rf django-server/salt/* /srv/salt
 chmod o+x /srv/salt/django-project/*.sh
 mkdir -p /srv/pillar
 
-
+SECRETKEY=`openssl rand -base64 48`
 # Pillar configuration
 cat > /srv/pillar/data.sls << EOF
 project_name: $PROJECTNAME
@@ -129,6 +129,7 @@ hostname: $HOSTNAME
 uses_notifications: $USESNOTIFICATIONS
 repo_slug: $REPOSLUG
 db_password: $DBPASS
+secret_key: $SECRETKEY
 EOF
 
 cat > /srv/pillar/top.sls << EOF
