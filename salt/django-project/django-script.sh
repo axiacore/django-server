@@ -13,4 +13,4 @@ curl -v --request POST --user $USERNAME:$PASSWORD \
   -d "{\"key\": \"$PUB_KEY\"}" 2>/dev/null
 
 DIRNAME="/opt/deploy/"$PROJECTNAME"_app/ws"
-mkdir DIRNAME
+mkdir $DIRNAME
