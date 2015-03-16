@@ -1,134 +1,79 @@
 #!/bin/bash
-#
-# Initial deployment for a server that holds application and database
-#
-#<UDF name="hostname" label="The hostname for the new Linode.">
-# HOSTNAME=
-#
-#<UDF name="fqdn" label="The new Linode's Fully Qualified Domain Name">
-# FQDN=
-#
-#<UDF name="deploypass" label="Password for the deploy user">
-# DEPLOYPASS=
-#
-#<UDF name="keyfile" label="url of authorized keys">
-# KEYFILE=
-#
-#<UDF name="projectname" label="this will be the username for the db and the dir name">
-# PROJECTNAME=
-#
-#<UDF name="dbpass" label="this will be the password for the database">
-# DBPASS=
-#
-#<UDF name="pgversion" label="Version of postgresql ie 9.4">
-# PGVERSION=
-#
-#<UDF name="has_celery" label="true if uses celery, otherwise disabled">
-# USESCELERY=
-#
-#<UDF name="has_ssl" label="true if will be using ssl">
-# USESSSL=
-#
-#<UDF name="has_notifications" label="true if has real time notifications">
-# USESNOTIFICATIONS=
-#
-#<UDF name="bitbucket_user" label="BitBucket user">
-# REPOUSER=
-#
-#<UDF name="bitbucket_pass" label="BitBucket password">
-# REPOPASS=
-#
-#<UDF name="repository_slug" label="Slug of the repository">
-# REPOSLUG=
 
-# This sets the variable $IPADDR to the IP address the new Linode receives.
 IPADDR=$(/sbin/ifconfig eth0 | awk '/inet / { print $2 }' | sed 's/addr://')
 
-apt-get -y upgrade
+echo $IPADDR $FQDN $HOSTNAME >> /etc/hosts
 
-# This section sets the hostname.
 echo $HOSTNAME > /etc/hostname
 hostname -F /etc/hostname
 
-# This section sets the Fully Qualified Domain Name (FQDN) in the hosts file.
-echo $IPADDR $FQDN $HOSTNAME >> /etc/hosts
-
-# Prepared external sources
-apt-get install -y python-software-properties software-properties-common unattended-upgrades
-add-apt-repository -y ppa:chris-lea/node.js
-add-apt-repository -y ppa:chris-lea/nginx-devel
-add-apt-repository -y ppa:chris-lea/redis-server
-add-apt-repository -y ppa:saltstack/salt
-apt-get update
-
-# Set timezone
 echo "America/Bogota" | tee /etc/timezone
 dpkg-reconfigure --frontend noninteractive tzdata
 
-# Base packages installations for Django
+add-apt-repository -y ppa:chris-lea/node.js
+add-apt-repository -y ppa:chris-lea/nginx-devel
+add-apt-repository -y ppa:chris-lea/redis-server
+add-apt-repository -y ppa:saltstack/saltk
+
+apt-get update
+
+apt-get install -y python-software-properties software-properties-common unattended-upgrades
 apt-get install -y build-essential python-dev python2.7-dev python-setuptools
-apt-get install -y git-core wget openssh-server
+apt-get install -y postgresql libpq-dev libffi-dev postgresql-contrib
+apt-get install -y git-core redis-server nodejs nginx-full
 apt-get install -y libxslt1-dev libxml2-dev
-apt-get install -y postgresql-$PGVERSION libpq-dev libffi-dev postgresql-contrib-$PGVERSION
 apt-get install -y libjpeg62-dev zlib1g-dev libfreetype6-dev
-apt-get install -y ruby1.9.1 cloc ruby1.9.1-dev
-apt-get install -y redis-server
-apt-get install -y nodejs
+apt-get install -y ruby1.9.1 ruby1.9.1-dev
 apt-get install -y fail2ban upstart logrotate
+apt-get install -y openjdk-7-jre
+apt-get install -y salt-master salt-minion salt-syndic salt-cloud salt-ssh salt-api
+
+apt-get -y dist-upgrade
+apt-get -y autoremove --purge
+
 easy_install pip
-gem install bundle
-npm -g install yuglify jshint bower
-apt-get -y install nginx nginx-common nginx-full
 pip install virtualenv uwsgi
 
-# Jenkins needed packages
-apt-get install -y openjdk-7-jdk
+gem install bundle
+
+npm -g install yuglify jshint bower
 
 # Base user
 useradd -d /opt/deploy -G www-data deploy
-echo "$DEPLOYPASS\n$DEPLOYPASS" | passwd deploy
+echo "$DEPLOY_PASS\n$DEPLOY_PASS" | passwd deploy
+
 mkdir -p /opt/deploy/.ssh/
-wget $KEYFILE -O /opt/deploy/.ssh/authorized_keys
+mkdir -p "/opt/deploy/"$PROJECT_NAME"_app"
+
+wget $KEYFILE_URL -O /opt/deploy/.ssh/authorized_keys
+
 chown -R deploy:www-data "/opt/deploy/.ssh"
-mkdir -p "/opt/deploy/"$PROJECTNAME"_app"
-chown -R deploy:www-data "/opt/deploy/"$PROJECTNAME"_app"
+chown -R deploy:www-data "/opt/deploy/"$PROJECT_NAME"_app"
 
-# salt basic installation
-apt-get install -y salt-master salt-minion salt-syndic salt-cloud salt-ssh salt-api
-apt-get autoremove
+su postgres -c "psql -c \"CREATE user $PROJECT_NAME password '"'"'$DB_PASS'"'"' ;\""
+su postgres -c "createdb -O $PROJECT_NAME $PROJECT_NAME"
 
-# database related stuff
-# database user creation
-su postgres -c "psql -c \"CREATE user $PROJECTNAME password '"'"'$DBPASS'"'"' ;\""
-# database creation
-su postgres -c "createdb -O $PROJECTNAME $PROJECTNAME"
-echo "local $PROJECTNAME $PROJECTNAME md5" >> /etc/postgresql/$PGVERSION/main/pg_hba.conf
-# postgresl postconfiguration
-sed -i "s/#password_encryption = on/password_encryption = on/g" /etc/postgresql/$PGVERSION/main/postgresql.conf
-/etc/init.d/postgresql restart
-
-# Salt configuration
-# This is an autonomous minion
+# Salt
 sed -i "s/#file_client: remote/file_client: local/g" /etc/salt/minion
 mkdir -p /srv/salt
+mkdir -p /srv/pillar
 cd /tmp
 git clone https://github.com/AxiaCore/django-server.git
 cp -rf django-server/salt/* /srv/salt
 chmod o+x /srv/salt/django-project/*.sh
-mkdir -p /srv/pillar
 
 SECRETKEY=`openssl rand -base64 48`
-# Pillar configuration
+# Pillar
 cat > /srv/pillar/data.sls << EOF
-project_name: $PROJECTNAME
-uses_celery: $USESCELERY
-uses_ssl: $USESSSL
+project_name: $PROJECT_NAME
+uses_celery: $USE_CELERY
+uses_ssl: $USE_SSL
 fqdn: $FQDN
 public_ip: $IPADDR
 hostname: $HOSTNAME
-uses_notifications: $USESNOTIFICATIONS
-repo_slug: $REPOSLUG
-db_password: $DBPASS
+uses_notifications: $USE_WS
+repo_slug: $BITBUCKET_REPO
+db_password: $DB_PASS
 secret_key: $SECRETKEY
 EOF
 
@@ -138,5 +83,4 @@ base:
      - data
 EOF
 
-# Salt execution
-salt-call state.highstate --local pillar="{\"bb_user\":\"$REPOUSER\", \"bb_pass\":\"$REPOPASS\"}"
+salt-call state.highstate --local pillar="{\"bb_user\":\"$BITBUCKET_USER\", \"bb_pass\":\"$BITBUCKET_PASS\"}"
