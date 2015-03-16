@@ -73,8 +73,8 @@ wget $KEYFILE_URL -O /opt/deploy/.ssh/authorized_keys
 chown -R deploy:www-data "/opt/deploy/.ssh"
 chown -R deploy:www-data "/opt/deploy/"$PROJECT_NAME"_app"
 
-su postgres -c "psql -c \"CREATE user '$PROJECT_NAME' password '"'"'$DB_PASS'"'"' ;\""
-su postgres -c "createdb -O '$PROJECT_NAME' '$PROJECT_NAME'"
+su postgres -c "psql -c \"CREATE user '"'"'$PROJECT_NAME'"'"' password '"'"'$DB_PASS'"'"' ;\""
+su postgres -c "createdb -O $PROJECT_NAME $PROJECT_NAME"
 
 # Salt
 sed -i "s/#file_client: remote/file_client: local/g" /etc/salt/minion
