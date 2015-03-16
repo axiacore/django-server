@@ -91,13 +91,14 @@ cat > /srv/pillar/data.sls << EOF
 project_name: $PROJECT_NAME
 uses_celery: $USE_CELERY
 uses_ssl: $USE_SSL
+uses_notifications: $USE_WS
 fqdn: $FQDN
 public_ip: $IPADDR
 hostname: $HOSTNAME
-uses_notifications: $USE_WS
 repo_slug: $BITBUCKET_REPO
 db_password: $DB_PASS
 secret_key: $SECRETKEY
+known_hosts_url: $KNOWN_HOSTS_URL
 EOF
 
 cat > /srv/pillar/top.sls << EOF
