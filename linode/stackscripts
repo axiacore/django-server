@@ -17,16 +17,39 @@ add-apt-repository -y ppa:saltstack/saltk
 
 apt-get update
 
-apt-get install -y python-software-properties software-properties-common unattended-upgrades
-apt-get install -y build-essential python-dev python2.7-dev python-setuptools
-apt-get install -y postgresql libpq-dev libffi-dev postgresql-contrib
-apt-get install -y git-core redis-server nodejs nginx-full
-apt-get install -y libxslt1-dev libxml2-dev
-apt-get install -y libjpeg62-dev zlib1g-dev libfreetype6-dev
-apt-get install -y ruby1.9.1 ruby1.9.1-dev
-apt-get install -y fail2ban upstart logrotate
-apt-get install -y openjdk-7-jre
-apt-get install -y salt-master salt-minion salt-syndic salt-cloud salt-ssh salt-api
+apt-get install -y \
+  python-software-properties \
+  software-properties-common \
+  unattended-upgrades \
+  build-essential \
+  python-dev \
+  python2.7-dev \
+  python-setuptools \
+  postgresql \
+  postgresql-contrib \
+  libpq-dev \
+  libffi-dev \
+  git-core \
+  redis-server \
+  nodejs \
+  nginx-full \
+  libxslt1-dev \
+  libxml2-dev \
+  libjpeg62-dev \
+  zlib1g-dev \
+  libfreetype6-dev \
+  ruby1.9.1 \
+  ruby1.9.1-dev \
+  fail2ban \
+  upstart \
+  logrotate \
+  openjdk-7-jre \
+  salt-master \
+  salt-minion \
+  salt-syndic \
+  salt-cloud \
+  salt-ssh \
+  salt-api 
 
 apt-get -y dist-upgrade
 apt-get -y autoremove --purge
@@ -40,7 +63,7 @@ npm -g install yuglify jshint bower
 
 # Base user
 useradd -d /opt/deploy -G www-data deploy
-echo "$DEPLOY_PASS\n$DEPLOY_PASS" | passwd deploy
+echo deploy:$DEPLOY_PASS | chpasswd
 
 mkdir -p /opt/deploy/.ssh/
 mkdir -p "/opt/deploy/"$PROJECT_NAME"_app"
@@ -50,8 +73,8 @@ wget $KEYFILE_URL -O /opt/deploy/.ssh/authorized_keys
 chown -R deploy:www-data "/opt/deploy/.ssh"
 chown -R deploy:www-data "/opt/deploy/"$PROJECT_NAME"_app"
 
-su postgres -c "psql -c \"CREATE user $PROJECT_NAME password '"'"'$DB_PASS'"'"' ;\""
-su postgres -c "createdb -O $PROJECT_NAME $PROJECT_NAME"
+su postgres -c "psql -c \"CREATE user '$PROJECT_NAME' password '"'"'$DB_PASS'"'"' ;\""
+su postgres -c "createdb -O '$PROJECT_NAME' '$PROJECT_NAME'"
 
 # Salt
 sed -i "s/#file_client: remote/file_client: local/g" /etc/salt/minion
