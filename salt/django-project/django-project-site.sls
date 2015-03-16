@@ -10,9 +10,9 @@ fetch-repo:
         - user: deploy
         - cwd: /opt/deploy
         - env:
-           - USERNAME: {{ pillar['bb_user'] }}
-           - PASSWORD: {{ pillar['bb_pass'] }}
-           - REPOSLUG: {{ pillar['repo_slug'] }}
+           - BB_USER: {{ pillar['bb_user'] }}
+           - BB_PASS: {{ pillar['bb_pass'] }}
+           - REPO_SLUG: {{ pillar['repo_slug'] }}
 
     git.latest:
         - name: git@bitbucket.org:axiacore/{{ pillar['repo_slug'] }}.git
@@ -27,7 +27,7 @@ pip-install:
         - user: deploy
         - cwd: /opt/deploy/{{ pillar['project_name'] }}_app/
         - env:
-           - PROJECTNAME: {{ pillar['project_name'] }}
+           - PROJECT_NAME: {{ pillar['project_name'] }}
 
 
 /opt/deploy/{{ pillar['project_name'] }}_app/{{ pillar ['project_name'] }}/app/local_settings.py:
