@@ -13,7 +13,7 @@ dpkg-reconfigure --frontend noninteractive tzdata
 add-apt-repository -y ppa:chris-lea/node.js
 add-apt-repository -y ppa:chris-lea/nginx-devel
 add-apt-repository -y ppa:chris-lea/redis-server
-add-apt-repository -y ppa:saltstack/saltk
+add-apt-repository -y ppa:saltstack/salt
 
 apt-get update
 
