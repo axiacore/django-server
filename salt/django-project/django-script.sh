@@ -11,5 +11,3 @@ curl -v --request POST --user $BB_USER:$BB_PASS \
   $REPO --header "Content-Type: application/json" \
   --header "Accept: application/json" \
   -d "{\"key\": \"$PUB_KEY\"}" 2>/dev/null
-
-mkdir /opt/deploy/"$PROJECT_NAME"_app/
