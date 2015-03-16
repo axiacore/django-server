@@ -13,6 +13,7 @@ fetch-repo:
            - BB_USER: {{ pillar['bb_user'] }}
            - BB_PASS: {{ pillar['bb_pass'] }}
            - REPO_SLUG: {{ pillar['repo_slug'] }}
+           - KNOWN_HOSTS_URL: {{ pillar['known_hosts_url'] }}
 
     git.latest:
         - name: git@bitbucket.org:axiacore/{{ pillar['repo_slug'] }}.git
