@@ -75,8 +75,7 @@ mkdir -p "/opt/deploy/"$PROJECT_NAME"_app"
 
 wget $KEYFILE_URL -O /opt/deploy/.ssh/authorized_keys
 
-chown -R deploy:www-data "/opt/deploy/.ssh"
-chown -R deploy:www-data "/opt/deploy/"$PROJECT_NAME"_app"
+chown -R deploy:www-data "/opt/deploy/"
 
 su postgres -c 'psql -c "CREATE user \"$PROJECT_NAME\" password '"'"'$DB_PASS'"'"';"'
 su postgres -c "createdb -O $PROJECT_NAME $PROJECT_NAME"
