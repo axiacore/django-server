@@ -37,9 +37,12 @@ apt-get install -y \
   nginx-full \
   libxslt1-dev \
   libxml2-dev \
+  libjpeg8 \
+  libjpeg-dev \
   libjpeg62-dev \
-  zlib1g-dev \
+  libpng12-dev \
   libfreetype6-dev \
+  zlib1g-dev \
   ruby1.9.1 \
   ruby1.9.1-dev \
   fail2ban \
