@@ -25,6 +25,8 @@ apt-get install -y \
   python-dev \
   python2.7-dev \
   python-setuptools \
+  ipython \
+  htop \
   postgresql \
   postgresql-contrib \
   libpq-dev \
