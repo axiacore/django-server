@@ -112,3 +112,9 @@ base:
 EOF
 
 salt-call state.highstate --local pillar="{\"bb_user\":\"$BITBUCKET_USER\", \"bb_pass\":\"$BITBUCKET_PASS\"}"
+
+# Securing ssh
+sed -i 's/^#PasswordAuthentication/PasswordAuthentication/' /etc/ssh/sshd_config
+sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+service ssh restart
